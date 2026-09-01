@@ -1,12 +1,17 @@
 import React from 'react';
 
-export const RatingStars = ({ rating = 0 }) => {
-  // Simple 5-star representation
-  const stars = Array.from({ length: 5 }, (_, index) => (
-    <span key={index} style={{ color: index < rating ? '#ffc107' : '#e4e5e9', fontSize: '1.2rem' }}>
-      ★
-    </span>
-  ));
+/**
+ * Renders a compact "★ 4.8 (132)" style rating.
+ * Pure presentational — styling comes from the bw-rating class
+ * defined in the page-level stylesheet (see CustomerHomePage.jsx).
+ */
+export const RatingStars = ({ rating, reviewCount, showCount = true }) => {
+  if (rating == null) return null;
 
-  return <div>{stars}</div>;
+  return (
+    <span className="bw-rating">
+      &#9733; {rating.toFixed(1)}
+      {showCount && reviewCount != null && ` (${reviewCount})`}
+    </span>
+  );
 };

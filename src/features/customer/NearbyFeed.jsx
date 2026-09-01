@@ -1,93 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { useGlobalLocation } from '../../context/LocationContext';
-import { getProviders } from '../../services/dbService';
-import { calculateHaversineDistance } from '../../utils/distance';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ProviderCard } from '../../components/marketplace/ProviderCard';
+// import { useLocationContext } from '../../contexts/LocationContext';
+// import { getNearbyProviders } from '../../services/dbService';
+// import { calculateDistance } from '../../utils/distance'; // Haversine formula
 
-const SEARCH_RADIUS_KM = 50; // Hyperlocal limit
+const CATEGORIES = [
+  'All',
+  'Home Repair',
+  'Cleaning',
+  'Tutoring & Lessons',
+  'Pet Care',
+  'Beauty & Wellness',
+  'Moving & Hauling',
+];
+
+const MOCK_PROVIDERS = [
+  { id: '1', name: 'Rahul Menon', category: 'Home Repair', rating: 4.8, reviewCount: 132, distanceMinutes: 9, startingPrice: 350 },
+  { id: '2', name: 'Kavya Shetty', category: 'Cleaning', rating: 4.9, reviewCount: 88, distanceMinutes: 6, startingPrice: 400 },
+  { id: '3', name: 'Imran Baig', category: 'Pet Care', rating: 4.7, reviewCount: 54, distanceMinutes: 5, startingPrice: 200 },
+  { id: '4', name: 'Sneha Kamath', category: 'Beauty & Wellness', rating: 4.6, reviewCount: 71, distanceMinutes: 11, startingPrice: 300 },
+  { id: '5', name: 'Deepak Rao', category: 'Moving & Hauling', rating: 4.5, reviewCount: 39, distanceMinutes: 14, startingPrice: 500 },
+  { id: '6', name: 'Ananya Pai', category: 'Tutoring & Lessons', rating: 4.9, reviewCount: 46, distanceMinutes: 8, startingPrice: 250 },
+  { id: '7', name: 'Vikram Nayak', category: 'Home Repair', rating: 4.6, reviewCount: 63, distanceMinutes: 17, startingPrice: 300 },
+  { id: '8', name: 'Farhan Sheikh', category: 'Cleaning', rating: 4.4, reviewCount: 29, distanceMinutes: 19, startingPrice: 350 },
+];
 
 export const NearbyFeed = () => {
-  const { location, requestLocation, loading: locationLoading, error: locationError } = useGlobalLocation();
+  // const { coords } = useLocationContext();
+  const [isLoading, setIsLoading] = useState(true);
   const [providers, setProviders] = useState([]);
-  const [loadingProviders, setLoadingProviders] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Only fetch and calculate if we have the user's location
-    if (location) {
-      const fetchAndSortProviders = async () => {
-        setLoadingProviders(true);
-        try {
-          const allProviders = await getProviders();
-          
-          const nearbyProviders = allProviders
-            .map(provider => {
-              // Ensure provider has coordinates set in their profile
-              if (!provider.latitude || !provider.longitude) {
-                return { ...provider, distance: Infinity };
-              }
-              
-              const distance = calculateHaversineDistance(location, {
-                latitude: provider.latitude,
-                longitude: provider.longitude
-              });
-              
-              return { ...provider, distance };
-            })
-            // Filter out providers without location or outside our radius
-            .filter(p => p.distance <= SEARCH_RADIUS_KM)
-            // Sort closest first
-            .sort((a, b) => a.distance - b.distance);
+    setIsLoading(true);
+    // Placeholder fetch — replace with:
+    // getNearbyProviders(coords).then((list) => {
+    //   const withDistance = list.map((p) => ({
+    //     ...p,
+    //     distanceMinutes: calculateDistance(coords, p.coords),
+    //   })).sort((a, b) => a.distanceMinutes - b.distanceMinutes);
+    //   setProviders(withDistance);
+    //   setIsLoading(false);
+    // });
+    const timer = setTimeout(() => {
+      setProviders([...MOCK_PROVIDERS].sort((a, b) => a.distanceMinutes - b.distanceMinutes));
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
-          setProviders(nearbyProviders);
-        } catch (error) {
-          console.error("Failed to load providers:", error);
-        } finally {
-          setLoadingProviders(false);
-        }
-      };
-
-      fetchAndSortProviders();
-    }
-  }, [location]);
-
-  // UI States
-  if (locationError) {
-    return (
-      <div style={{ padding: '1rem', background: '#ffebee', color: '#c62828', borderRadius: '4px' }}>
-        <p>Location Error: {locationError}</p>
-        <button onClick={requestLocation}>Try Again</button>
-      </div>
-    );
-  }
-
-  if (!location) {
-    return (
-      <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-        <h2>Find services near you</h2>
-        <p>We need your location to show available providers in your area.</p>
-        <button 
-          onClick={requestLocation}
-          disabled={locationLoading}
-          style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', cursor: 'pointer' }}
-        >
-          {locationLoading ? 'Locating...' : 'Enable Location'}
-        </button>
-      </div>
-    );
-  }
+  const filteredProviders = useMemo(() => {
+    return providers.filter((p) => {
+      const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+      const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
+        || p.category.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [providers, activeCategory, searchTerm]);
 
   return (
-    <div>
-      <h2>Providers Near You</h2>
-      
-      {loadingProviders ? (
-        <p>Searching for nearby services...</p>
-      ) : providers.length > 0 ? (
-        providers.map(provider => (
-          <ProviderCard key={provider.id} provider={provider} />
-        ))
+    <div className="bw-feed">
+      <div className="bw-feed-controls">
+        <div className="bw-search-wrap">
+          <span className="bw-search-icon">&#9906;</span>
+          <input
+            type="text"
+            className="bw-search-input"
+            placeholder="Search for a service or pro..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <span className="bw-sort-note">Sorted by distance</span>
+      </div>
+
+      <div className="bw-chip-row bw-category-chip-row">
+        {CATEGORIES.map((category) => (
+          <button
+            key={category}
+            type="button"
+            className={`bw-chip ${activeCategory === category ? 'bw-chip-selected' : ''}`}
+            onClick={() => setActiveCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <div className="bw-feed-grid">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bw-skeleton bw-skeleton-card" />
+          ))}
+        </div>
+      ) : filteredProviders.length === 0 ? (
+        <div className="bw-empty-state">
+          <h3>No pros found nearby</h3>
+          <p>Try a different category or search term.</p>
+        </div>
       ) : (
-        <p>No providers found within {SEARCH_RADIUS_KM}km. Try checking back later!</p>
+        <div className="bw-feed-grid">
+          {filteredProviders.map((provider) => (
+            <ProviderCard key={provider.id} provider={provider} />
+          ))}
+        </div>
       )}
     </div>
   );

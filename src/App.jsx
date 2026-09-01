@@ -39,6 +39,14 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/customer/checkout" element={<CheckoutPage />} />
+            <Route path="/customer/provider/:id" element={<ProviderDetailsPage />} />
+            <Route path="/customer/orders" element={<CustomerOrdersPage />} />
+            <Route path="/customer/home" element={<CustomerHomePage />} />
+            <Route path="/provider/dashboard" element={<ProviderDashboardPage />} />
+            <Route path="/provider/schedule" element={<ProviderSchedulePage />} />
+            <Route path="/provider/settings" element={<ProviderSettingsPage />} />
+            <Route path="/shared/chat" element={<ChatPage />} />
 
             {/* Protected Routes (Must be logged in) */}
             <Route element={<ProtectedRoute />}>

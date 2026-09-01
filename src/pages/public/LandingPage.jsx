@@ -1,619 +1,717 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const LandingPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/customer/home?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/customer/home');
+    }
+  };
+
+  const categories = [
+    { title: 'Electrical & Plumbing', tag: 'High Demand', icon: '⚡', avgDist: '0.4 km', time: '6 min away', count: '14 active' },
+    { title: 'Smart Home & Assembly', tag: 'Fast Match', icon: '🛋️', avgDist: '0.8 km', time: '9 min away', count: '8 active' },
+    { title: 'Deep Cleaning & Turnover', tag: 'Instant Book', icon: '✨', avgDist: '0.2 km', time: '4 min away', count: '19 active' },
+    { title: 'Appliance Repair', tag: 'Certified', icon: '🔧', avgDist: '1.1 km', time: '12 min away', count: '6 active' },
+    { title: 'Moving & Heavy Transport', tag: 'Van Ready', icon: '📦', avgDist: '1.5 km', time: '15 min away', count: '11 active' },
+    { title: 'Pet Sitting & Walks', tag: 'Neighborhood', icon: '🐾', avgDist: '0.3 km', time: '5 min away', count: '22 active' },
+  ];
+
   return (
-    <div className="bw-landing">
+    <div className="tr-modern">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-        .bw-landing, .bw-landing * { box-sizing: border-box; }
-        .bw-landing {
-          --ink: #1C2321;
-          --paper: #F1F4EF;
-          --paper-alt: #E7ECE3;
-          --amber: #E8A33D;
-          --amber-soft: #FBEBD2;
-          --route: #2F6F63;
-          --route-soft: #DCEAE6;
-          --slate: #5B6660;
-          --line: #D9E0D6;
-          --line-dark: rgba(241,244,239,0.14);
-          --font-display: 'Space Grotesk', sans-serif;
-          --font-body: 'Source Serif 4', Georgia, serif;
-          --font-mono: 'IBM Plex Mono', monospace;
+        .tr-modern, .tr-modern * {
+          box-sizing: border-box;
+        }
 
-          background: var(--paper);
-          color: var(--ink);
-          font-family: var(--font-body);
+        .tr-modern {
+          --brand-primary: #0F3E33;
+          --brand-accent: #00D589;
+          --brand-emerald: #10B981;
+          --surface-canvas: #FAFAF9;
+          --surface-panel: #FFFFFF;
+          --surface-subtle: #F3F4F1;
+          --text-main: #0C1210;
+          --text-muted: #57635E;
+          --text-faint: #8E9B95;
+          --border-subtle: rgba(15, 62, 51, 0.08);
+          --border-prominent: rgba(15, 62, 51, 0.16);
+          --shadow-floating: 0 20px 40px -15px rgba(15, 62, 51, 0.07);
+          --shadow-glow: 0 0 24px -4px rgba(0, 213, 137, 0.25);
+          --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+          --font-mono: 'JetBrains Mono', monospace;
+
+          background-color: var(--surface-canvas);
+          color: var(--text-main);
+          font-family: var(--font-display);
           line-height: 1.5;
           -webkit-font-smoothing: antialiased;
         }
 
-        .bw-landing a { color: inherit; }
-        .bw-landing h1, .bw-landing h2, .bw-landing h3 {
-          font-family: var(--font-display);
-          margin: 0;
-          letter-spacing: -0.01em;
-        }
-        .bw-landing p { margin: 0; }
-
-        .bw-landing a:focus-visible,
-        .bw-landing button:focus-visible {
-          outline: 2px solid var(--amber);
-          outline-offset: 3px;
+        .tr-shell {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 1.5rem;
         }
 
-        /* ---------- Nav ---------- */
-        .bw-nav {
+        /* ------------------ Top Navigation ------------------ */
+        .tr-navbar {
           position: sticky;
           top: 0;
-          z-index: 20;
+          z-index: 100;
+          background: rgba(250, 250, 249, 0.85);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-bottom: 1px solid var(--border-subtle);
+          padding: 0.875rem 0;
+        }
+
+        .tr-nav-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 1.1rem 2rem;
-          background: rgba(241,244,239,0.9);
-          backdrop-filter: blur(8px);
-          border-bottom: 1px solid var(--line);
         }
-        .bw-logo {
-          font-family: var(--font-display);
-          font-weight: 700;
-          font-size: 1.25rem;
-          letter-spacing: -0.02em;
-        }
-        .bw-logo span { color: var(--route); }
-        .bw-nav-links { display: flex; align-items: center; gap: 0.75rem; }
-        .bw-link-login {
+
+        .tr-brand-logo {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 800;
+          font-size: 1.35rem;
+          letter-spacing: -0.04em;
           text-decoration: none;
-          font-family: var(--font-display);
-          font-size: 0.9rem;
-          font-weight: 500;
+          color: var(--brand-primary);
+        }
+
+        .tr-brand-logo-pill {
+          width: 8px;
+          height: 8px;
+          background: var(--brand-accent);
+          border-radius: 50%;
+          box-shadow: 0 0 10px var(--brand-accent);
+        }
+
+        .tr-nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .tr-btn-ghost {
           padding: 0.55rem 1.1rem;
-          border-radius: 999px;
-          color: var(--ink);
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--text-main);
+          text-decoration: none;
+          border-radius: 10px;
           transition: background 0.15s ease;
         }
-        .bw-link-login:hover { background: var(--paper-alt); }
-        .bw-link-signup {
-          text-decoration: none;
-          font-family: var(--font-display);
-          font-size: 0.9rem;
-          font-weight: 600;
+
+        .tr-btn-ghost:hover {
+          background: var(--surface-subtle);
+        }
+
+        .tr-btn-pill-primary {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
           padding: 0.55rem 1.25rem;
-          border-radius: 999px;
-          background: var(--amber);
-          color: var(--ink);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #FFFFFF;
+          background: var(--brand-primary);
+          text-decoration: none;
+          border-radius: 100px;
+          transition: transform 0.12s ease, box-shadow 0.12s ease;
         }
-        .bw-link-signup:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(232,163,61,0.35); }
 
-        /* ---------- Shared section scaffolding ---------- */
-        .bw-section { padding: 5.5rem 2rem; }
-        .bw-section--tight { padding: 4.5rem 2rem; }
-        .bw-container { max-width: 1120px; margin: 0 auto; }
-        .bw-section--dark { background: var(--ink); color: var(--paper); }
-        .bw-section--alt { background: var(--paper-alt); }
-
-        .bw-eyebrow {
-          display: inline-block;
-          font-family: var(--font-mono);
-          font-size: 0.75rem;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--route);
-          margin-bottom: 1rem;
+        .tr-btn-pill-primary:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(15, 62, 51, 0.15);
         }
-        .bw-section--dark .bw-eyebrow { color: #8FBDB2; }
 
-        .bw-section-head { max-width: 640px; margin-bottom: 3rem; }
-        .bw-section-head h2 {
-          font-size: clamp(1.9rem, 3vw, 2.6rem);
-          font-weight: 600;
-          margin-bottom: 0.9rem;
-        }
-        .bw-section-head p {
-          font-size: 1.05rem;
-          color: var(--slate);
-        }
-        .bw-section--dark .bw-section-head p { color: #B7C2BC; }
-
-        /* ---------- Hero ---------- */
-        .bw-hero {
-          background: var(--ink);
-          color: var(--paper);
-          padding: 4rem 2rem 5rem;
+        /* ------------------ Hero Section ------------------ */
+        .tr-hero-wrap {
+          padding: 4.5rem 0 3.5rem;
           position: relative;
-          overflow: hidden;
         }
-        .bw-hero-inner {
-          max-width: 1120px;
-          margin: 0 auto;
+
+        .tr-hero-layout {
           display: grid;
-          grid-template-columns: 1.05fr 0.95fr;
+          grid-template-columns: 1.1fr 0.9fr;
           gap: 3rem;
           align-items: center;
         }
-        .bw-hero h1 {
-          font-size: clamp(2.4rem, 5vw, 3.75rem);
-          font-weight: 700;
-          line-height: 1.08;
+
+        .tr-pill-indicator {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.35rem 0.85rem;
+          border-radius: 100px;
+          background: rgba(0, 213, 137, 0.12);
+          border: 1px solid rgba(0, 213, 137, 0.25);
+          color: var(--brand-primary);
+          font-family: var(--font-mono);
+          font-size: 0.78rem;
+          font-weight: 500;
+          margin-bottom: 1.5rem;
+        }
+
+        .tr-pulse-signal {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--brand-accent);
+          box-shadow: 0 0 8px var(--brand-accent);
+          animation: pulsePing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pulsePing {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.3); }
+        }
+
+        .tr-hero-title {
+          font-size: clamp(2.5rem, 4.8vw, 3.8rem);
+          font-weight: 800;
+          letter-spacing: -0.04em;
+          line-height: 1.05;
           margin-bottom: 1.25rem;
-        }
-        .bw-hero .bw-lede {
-          font-family: var(--font-body);
-          font-size: 1.15rem;
-          color: #B7C2BC;
-          max-width: 34rem;
-          margin-bottom: 2.25rem;
-        }
-        .bw-cta-row { display: flex; flex-wrap: wrap; gap: 0.9rem; }
-        .bw-cta-primary {
-          text-decoration: none;
-          font-family: var(--font-display);
-          font-weight: 600;
-          font-size: 1rem;
-          padding: 0.9rem 1.6rem;
-          border-radius: 10px;
-          background: var(--amber);
-          color: var(--ink);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .bw-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(232,163,61,0.3); }
-        .bw-cta-secondary {
-          text-decoration: none;
-          font-family: var(--font-display);
-          font-weight: 600;
-          font-size: 1rem;
-          padding: 0.9rem 1.6rem;
-          border-radius: 10px;
-          border: 1px solid var(--line-dark);
-          color: var(--paper);
-          transition: background 0.15s ease, border-color 0.15s ease;
-        }
-        .bw-cta-secondary:hover { background: rgba(241,244,239,0.08); border-color: rgba(241,244,239,0.4); }
-
-        .bw-dial-wrap { display: flex; justify-content: center; }
-        .bw-dial-caption {
-          text-align: center;
-          font-family: var(--font-mono);
-          font-size: 0.7rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: #8FBDB2;
-          margin-top: 0.75rem;
+          color: var(--text-main);
         }
 
-        .bw-radar-ping {
-          transform-origin: 200px 200px;
-          animation: bw-ping 2.6s ease-out infinite;
-        }
-        .bw-pulse-dot { animation: bw-pulse 2.2s ease-in-out infinite; }
-        @keyframes bw-ping {
-          0% { transform: scale(0.35); opacity: 0.55; }
-          100% { transform: scale(1); opacity: 0; }
-        }
-        @keyframes bw-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.45; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .bw-radar-ping, .bw-pulse-dot { animation: none; }
+        .tr-hero-title span {
+          background: linear-gradient(135deg, #0F3E33 0%, #10B981 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
-        /* ---------- How it works ---------- */
-        .bw-steps-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1.75rem;
-        }
-        .bw-step-number {
-          font-family: var(--font-mono);
-          font-size: 0.85rem;
-          color: var(--route);
-          margin-bottom: 0.9rem;
-        }
-        .bw-step-card h3 {
-          font-size: 1.05rem;
-          font-weight: 600;
-          margin-bottom: 0.5rem;
-        }
-        .bw-step-card p {
-          font-size: 0.95rem;
-          color: var(--slate);
+        .tr-hero-desc {
+          font-size: 1.1rem;
+          color: var(--text-muted);
+          line-height: 1.6;
+          margin-bottom: 2rem;
+          max-width: 500px;
         }
 
-        /* ---------- Categories ---------- */
-        .bw-categories-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.25rem;
-        }
-        .bw-category-card {
-          background: var(--paper);
-          border: 1px solid var(--line);
-          border-radius: 14px;
-          padding: 1.6rem;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .bw-category-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 28px rgba(28,35,33,0.08);
-        }
-        .bw-category-icon { font-size: 1.6rem; margin-bottom: 0.9rem; }
-        .bw-category-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
-        .bw-category-card p { font-size: 0.92rem; color: var(--slate); margin-bottom: 1rem; }
-        .bw-category-eta {
-          display: inline-block;
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-          letter-spacing: 0.03em;
-          background: var(--route-soft);
-          color: var(--route);
-          padding: 0.3rem 0.6rem;
-          border-radius: 999px;
+        .tr-omnisearch {
+          background: var(--surface-panel);
+          border: 1px solid var(--border-prominent);
+          border-radius: 16px;
+          padding: 0.5rem;
+          display: flex;
+          gap: 0.5rem;
+          box-shadow: var(--shadow-floating);
+          max-width: 520px;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
-        /* ---------- Trust / stats ---------- */
-        .bw-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 2rem;
-          margin-bottom: 3.5rem;
+        .tr-omnisearch:focus-within {
+          border-color: var(--brand-primary);
+          box-shadow: 0 0 0 3px rgba(15, 62, 51, 0.08), var(--shadow-floating);
         }
-        .bw-stat-number {
-          font-family: var(--font-display);
-          font-size: clamp(2.2rem, 4vw, 3rem);
-          font-weight: 700;
-          color: var(--amber);
-        }
-        .bw-stat-label {
-          font-family: var(--font-mono);
-          font-size: 0.8rem;
-          color: #B7C2BC;
-          margin-top: 0.5rem;
-        }
-        .bw-testimonial-row {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.25rem;
-        }
-        .bw-testimonial-card {
-          background: rgba(241,244,239,0.05);
-          border: 1px solid var(--line-dark);
-          border-radius: 14px;
-          padding: 1.5rem;
-        }
-        .bw-testimonial-card p.bw-quote {
+
+        .tr-omnisearch input {
+          flex: 1;
+          border: none;
+          background: transparent;
+          padding: 0.75rem 1rem;
           font-size: 0.98rem;
-          margin-bottom: 1rem;
-        }
-        .bw-testimonial-card p.bw-name {
-          font-family: var(--font-mono);
-          font-size: 0.78rem;
-          color: #8FBDB2;
+          font-family: inherit;
+          outline: none;
+          color: var(--text-main);
         }
 
-        /* ---------- Final CTA ---------- */
-        .bw-final-cta { text-align: center; }
-        .bw-final-cta h2 {
-          font-size: clamp(2rem, 3.5vw, 2.75rem);
-          font-weight: 600;
-          margin-bottom: 0.9rem;
+        .tr-omnisearch button {
+          border: none;
+          background: var(--brand-primary);
+          color: #FFFFFF;
+          font-weight: 700;
+          font-size: 0.9rem;
+          padding: 0 1.5rem;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: opacity 0.15s ease;
         }
-        .bw-final-cta p {
-          font-size: 1.05rem;
-          color: var(--slate);
-          max-width: 34rem;
-          margin: 0 auto 2rem;
-        }
-        .bw-final-cta .bw-cta-row { justify-content: center; }
-        .bw-final-cta .bw-cta-secondary {
-          border: 1px solid var(--line);
-          color: var(--ink);
-        }
-        .bw-final-cta .bw-cta-secondary:hover { background: var(--paper-alt); }
 
-        /* ---------- Footer ---------- */
-        .bw-footer {
-          background: var(--ink);
-          color: var(--paper);
-          padding: 4rem 2rem 2rem;
+        .tr-omnisearch button:hover {
+          opacity: 0.92;
         }
-        .bw-footer-grid {
-          display: grid;
-          grid-template-columns: 1.4fr repeat(3, 1fr);
-          gap: 2.5rem;
-          max-width: 1120px;
-          margin: 0 auto;
+
+        /* ------------------ Bento Live Telemetry Card ------------------ */
+        .tr-radar-bento {
+          background: var(--surface-panel);
+          border: 1px solid var(--border-subtle);
+          border-radius: 24px;
+          padding: 1.75rem;
+          box-shadow: var(--shadow-floating);
+          position: relative;
         }
-        .bw-footer-grid h4 {
-          font-family: var(--font-mono);
-          font-size: 0.78rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: #8FBDB2;
-          margin-bottom: 1rem;
-        }
-        .bw-footer-grid ul { list-style: none; margin: 0; padding: 0; }
-        .bw-footer-grid li { margin-bottom: 0.65rem; }
-        .bw-footer-grid a { text-decoration: none; color: #D5DDD2; font-size: 0.92rem; }
-        .bw-footer-grid a:hover { color: var(--paper); }
-        .bw-footer-tagline { color: #9FACA5; font-size: 0.92rem; max-width: 20rem; margin-top: 0.75rem; }
-        .bw-footer-bottom {
-          max-width: 1120px;
-          margin: 3rem auto 0;
-          padding-top: 1.5rem;
-          border-top: 1px solid var(--line-dark);
+
+        .tr-radar-head {
           display: flex;
           justify-content: space-between;
-          flex-wrap: wrap;
-          gap: 0.75rem;
-          font-family: var(--font-mono);
-          font-size: 0.78rem;
-          color: #8B968F;
+          align-items: center;
+          margin-bottom: 1.5rem;
         }
 
-        /* ---------- Responsive ---------- */
-        @media (max-width: 900px) {
-          .bw-hero-inner { grid-template-columns: 1fr; }
-          .bw-dial-wrap { order: -1; }
-          .bw-steps-grid { grid-template-columns: repeat(2, 1fr); }
-          .bw-categories-grid { grid-template-columns: repeat(2, 1fr); }
-          .bw-stats-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
-          .bw-testimonial-row { grid-template-columns: 1fr; }
-          .bw-footer-grid { grid-template-columns: 1fr 1fr; }
+        .tr-radar-head-text {
+          font-size: 0.95rem;
+          font-weight: 700;
         }
-        @media (max-width: 560px) {
-          .bw-nav { padding: 1rem 1.25rem; }
-          .bw-section, .bw-section--tight { padding: 3.5rem 1.25rem; }
-          .bw-steps-grid { grid-template-columns: 1fr; }
-          .bw-categories-grid { grid-template-columns: 1fr; }
-          .bw-footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-          .bw-cta-row { flex-direction: column; align-items: stretch; }
-          .bw-cta-primary, .bw-cta-secondary { text-align: center; }
+
+        .tr-chip-geo {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          color: var(--brand-primary);
+          background: var(--surface-subtle);
+          padding: 0.25rem 0.6rem;
+          border-radius: 8px;
+        }
+
+        .tr-dispatch-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .tr-dispatch-card {
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          gap: 0.9rem;
+          align-items: center;
+          padding: 0.9rem;
+          background: var(--surface-canvas);
+          border-radius: 16px;
+          border: 1px solid var(--border-subtle);
+          transition: transform 0.15s ease, background 0.15s ease;
+          text-decoration: none;
+          color: inherit;
+        }
+
+        .tr-dispatch-card:hover {
+          transform: translateX(4px);
+          background: var(--surface-panel);
+          border-color: var(--border-prominent);
+        }
+
+        .tr-avatar-frame {
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          background: #E5EFEA;
+          color: var(--brand-primary);
+          font-weight: 800;
+          font-size: 0.85rem;
+          display: grid;
+          place-items: center;
+        }
+
+        .tr-dispatch-meta h4 {
+          margin: 0 0 0.15rem;
+          font-size: 0.92rem;
+          font-weight: 700;
+        }
+
+        .tr-dispatch-meta p {
+          margin: 0;
+          font-size: 0.78rem;
+          color: var(--text-muted);
+        }
+
+        .tr-dispatch-stats {
+          text-align: right;
+          font-family: var(--font-mono);
+        }
+
+        .tr-stat-dist {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--brand-primary);
+        }
+
+        .tr-stat-tag {
+          font-size: 0.7rem;
+          color: var(--text-faint);
+          display: block;
+        }
+
+        /* ------------------ Bento Grid Catalog ------------------ */
+        .tr-section-wrap {
+          padding: 5rem 0;
+        }
+
+        .tr-section-title-wrap {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-bottom: 2.5rem;
+        }
+
+        .tr-section-title-wrap h2 {
+          font-size: 1.85rem;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+          margin: 0 0 0.25rem;
+        }
+
+        .tr-section-title-wrap p {
+          margin: 0;
+          font-size: 0.95rem;
+          color: var(--text-muted);
+        }
+
+        .tr-bento-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.25rem;
+        }
+
+        .tr-bento-item {
+          background: var(--surface-panel);
+          border: 1px solid var(--border-subtle);
+          border-radius: 20px;
+          padding: 1.75rem;
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          position: relative;
+          overflow: hidden;
+          transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tr-bento-item:hover {
+          border-color: var(--brand-primary);
+          transform: translateY(-3px);
+          box-shadow: var(--shadow-floating);
+        }
+
+        .tr-bento-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 1.25rem;
+        }
+
+        .tr-bento-icon {
+          width: 48px;
+          height: 48px;
+          background: var(--surface-subtle);
+          border-radius: 14px;
+          display: grid;
+          place-items: center;
+          font-size: 1.4rem;
+        }
+
+        .tr-tag-status {
+          font-family: var(--font-mono);
+          font-size: 0.68rem;
+          font-weight: 600;
+          color: var(--brand-primary);
+          background: rgba(0, 213, 137, 0.12);
+          padding: 0.3rem 0.6rem;
+          border-radius: 6px;
+        }
+
+        .tr-bento-title {
+          font-size: 1.15rem;
+          font-weight: 700;
+          margin: 0 0 0.4rem;
+          letter-spacing: -0.01em;
+        }
+
+        .tr-bento-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-subtle);
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          color: var(--text-muted);
+        }
+
+        .tr-bento-eta {
+          color: var(--brand-primary);
+          font-weight: 700;
+        }
+
+        /* ------------------ Micro Protocol Steps ------------------ */
+        .tr-steps-strip {
+          background: #0C1210;
+          color: #FFFFFF;
+          border-radius: 28px;
+          padding: 3.5rem 3rem;
+          margin-bottom: 5rem;
+        }
+
+        .tr-steps-head {
+          max-width: 480px;
+          margin-bottom: 3rem;
+        }
+
+        .tr-steps-head h3 {
+          font-size: 1.75rem;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          margin: 0 0 0.5rem;
+        }
+
+        .tr-steps-head p {
+          color: #8E9B95;
+          margin: 0;
+          font-size: 0.95rem;
+        }
+
+        .tr-steps-flow {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2.5rem;
+        }
+
+        .tr-step-col {
+          border-left: 1px solid rgba(255, 255, 255, 0.12);
+          padding-left: 1.5rem;
+        }
+
+        .tr-step-col-num {
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          color: var(--brand-accent);
+          margin-bottom: 0.75rem;
+        }
+
+        .tr-step-col h4 {
+          font-size: 1.1rem;
+          font-weight: 700;
+          margin: 0 0 0.4rem;
+        }
+
+        .tr-step-col p {
+          font-size: 0.88rem;
+          color: #8E9B95;
+          margin: 0;
+          line-height: 1.5;
+        }
+
+        /* ------------------ Minimal Footer ------------------ */
+        .tr-footer-clean {
+          border-top: 1px solid var(--border-subtle);
+          padding: 3rem 0;
+          font-size: 0.85rem;
+          color: var(--text-muted);
+        }
+
+        .tr-footer-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .tr-footer-nav {
+          display: flex;
+          gap: 1.5rem;
+        }
+
+        .tr-footer-nav a {
+          color: inherit;
+          text-decoration: none;
+          transition: color 0.15s ease;
+        }
+
+        .tr-footer-nav a:hover {
+          color: var(--text-main);
+        }
+
+        /* ------------------ Responsive Breakpoints ------------------ */
+        @media (max-width: 992px) {
+          .tr-hero-layout { grid-template-columns: 1fr; }
+          .tr-bento-grid { grid-template-columns: repeat(2, 1fr); }
+          .tr-steps-flow { grid-template-columns: 1fr; gap: 2rem; }
+          .tr-step-col { border-left: 2px solid rgba(255, 255, 255, 0.12); }
+        }
+
+        @media (max-width: 640px) {
+          .tr-bento-grid { grid-template-columns: 1fr; }
+          .tr-omnisearch { flex-direction: column; }
+          .tr-omnisearch button { padding: 0.75rem; }
+          .tr-steps-strip { padding: 2rem 1.5rem; }
+          .tr-footer-row { flex-direction: column; gap: 1.25rem; text-align: center; }
         }
       `}</style>
 
-      {/* ---------- Nav ---------- */}
-      <nav className="bw-nav">
-        <div className="bw-logo">Block<span>wise</span></div>
-        <div className="bw-nav-links">
-          <Link to="/login" className="bw-link-login">Log In</Link>
-          <Link to="/register" className="bw-link-signup">Sign Up</Link>
+      {/* Navigation */}
+      <nav className="tr-navbar">
+        <div className="tr-shell tr-nav-row">
+          <Link to="/" className="tr-brand-logo">
+            <span className="tr-brand-logo-pill"></span>
+            LocalFix
+          </Link>
+          <div className="tr-nav-actions">
+            <Link to="/login" className="tr-btn-ghost">Sign In</Link>
+            <Link to="/register" className="tr-btn-pill-primary">
+              Become a Provider
+            </Link>
+          </div>
         </div>
       </nav>
 
-      {/* ---------- 1. Hero ---------- */}
-      <section className="bw-hero">
-        <div className="bw-hero-inner">
+      {/* Hero Section */}
+      <section className="tr-hero-wrap">
+        <div className="tr-shell tr-hero-layout">
           <div>
-            <span className="bw-eyebrow">Live on your block right now</span>
-            <h1>Help is already on your street.</h1>
-            <p className="bw-lede">
-              Blockwise matches you with vetted local pros in minutes — not because
-              they're the highest-rated in the city, but because they're actually
-              close. No travel fees, no waiting for someone to drive across town.
+            <div className="tr-pill-indicator">
+              <span className="tr-pulse-signal"></span>
+              Hyperlocal Mesh Active
+            </div>
+            <h1 className="tr-hero-title">
+              Instant help from your <span>verified neighbors.</span>
+            </h1>
+            <p className="tr-hero-desc">
+              Zero travel overhead, direct browser-calculated routing, and instant bookings dispatched across your block.
             </p>
-            <div className="bw-cta-row">
-              <Link to="/register" className="bw-cta-primary">Get Started Free</Link>
-              <Link to="/login" className="bw-cta-secondary">Log In</Link>
-            </div>
+
+            <form className="tr-omnisearch" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="What needs to be fixed today?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="submit">Locate Pros</button>
+            </form>
           </div>
 
-          <div>
-            <div className="bw-dial-wrap">
-              <svg viewBox="0 0 400 400" width="380" height="380" role="img" aria-label="Map showing nearby available professionals ranked by walking distance">
-                <circle cx="200" cy="200" r="60" fill="none" stroke="rgba(220,234,230,0.16)" strokeWidth="1" />
-                <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(220,234,230,0.16)" strokeWidth="1" />
-                <circle cx="200" cy="200" r="180" fill="none" stroke="rgba(220,234,230,0.16)" strokeWidth="1" />
-
-                <text x="266" y="204" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8FBDB2">5 MIN</text>
-                <text x="326" y="204" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8FBDB2">15 MIN</text>
-                <text x="176" y="16" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#8FBDB2">30 MIN</text>
-
-                <circle className="bw-radar-ping" cx="200" cy="200" r="60" fill="none" stroke="#E8A33D" strokeWidth="1.5" />
-
-                {/* pro dots */}
-                <circle className="bw-pulse-dot" cx="250" cy="150" r="5" fill="#E8A33D" />
-                <text x="258" y="146" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#F1F4EF">8 min</text>
-
-                <circle className="bw-pulse-dot" cx="140" cy="262" r="5" fill="#E8A33D" style={{ animationDelay: '0.4s' }} />
-                <text x="60" y="270" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#F1F4EF">11 min</text>
-
-                <circle className="bw-pulse-dot" cx="320" cy="262" r="5" fill="#E8A33D" style={{ animationDelay: '0.8s' }} />
-                <text x="328" y="266" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#F1F4EF">17 min</text>
-
-                <circle className="bw-pulse-dot" cx="112" cy="118" r="4.5" fill="#E8A33D" style={{ animationDelay: '1.1s' }} />
-                <text x="52" y="112" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#F1F4EF">15 min</text>
-
-                <circle className="bw-pulse-dot" cx="322" cy="336" r="4.5" fill="#E8A33D" style={{ animationDelay: '1.5s' }} />
-                <text x="300" y="358" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#F1F4EF">26 min</text>
-
-                {/* you */}
-                <circle cx="200" cy="200" r="7" fill="#F1F4EF" />
-                <circle cx="200" cy="200" r="7" fill="none" stroke="#1C2321" strokeWidth="1.5" />
-                <text x="200" y="226" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#B7C2BC">YOU</text>
-              </svg>
+          {/* Real-time Telemetry Bento Card */}
+          <div className="tr-radar-bento">
+            <div className="tr-radar-head">
+              <span className="tr-radar-head-text">Live Provider Availability</span>
+              <span className="tr-chip-geo">Native Geolocation</span>
             </div>
-            <p className="bw-dial-caption">Five pros already within 30 minutes, live</p>
-          </div>
-        </div>
-      </section>
 
-      {/* ---------- 2. How it works ---------- */}
-      <section className="bw-section">
-        <div className="bw-container">
-          <div className="bw-section-head">
-            <span className="bw-eyebrow">How it works</span>
-            <h2>From posting the job to someone knocking on your door.</h2>
-            <p>Four steps, usually under fifteen minutes.</p>
-          </div>
-          <div className="bw-steps-grid">
-            <div className="bw-step-card">
-              <div className="bw-step-number">01</div>
-              <h3>Post what you need</h3>
-              <p>A few lines about the job, your address, and when you need it done.</p>
-            </div>
-            <div className="bw-step-card">
-              <div className="bw-step-number">02</div>
-              <h3>Get matched by distance</h3>
-              <p>Blockwise ranks pros by how close they actually are — not just star ratings.</p>
-            </div>
-            <div className="bw-step-card">
-              <div className="bw-step-number">03</div>
-              <h3>Watch them head over</h3>
-              <p>A live ETA on the map, so you know exactly when to expect them.</p>
-            </div>
-            <div className="bw-step-card">
-              <div className="bw-step-number">04</div>
-              <h3>Pay when it's done</h3>
-              <p>One receipt. No mileage line item, no surprise travel charge.</p>
+            <div className="tr-dispatch-list">
+              <Link to="/customer/provider/1" className="tr-dispatch-card">
+                <div className="tr-avatar-frame">AR</div>
+                <div className="tr-dispatch-meta">
+                  <h4>Ananya Roy</h4>
+                  <p>Certified Electrician & Wiring</p>
+                </div>
+                <div className="tr-dispatch-stats">
+                  <span className="tr-stat-dist">0.3 km</span>
+                  <span className="tr-stat-tag">4 min arrival</span>
+                </div>
+              </Link>
+
+              <Link to="/customer/provider/1" className="tr-dispatch-card">
+                <div className="tr-avatar-frame">VS</div>
+                <div className="tr-dispatch-meta">
+                  <h4>Vikram Seth</h4>
+                  <p>Carpentry & Furniture Assembly</p>
+                </div>
+                <div className="tr-dispatch-stats">
+                  <span className="tr-stat-dist">0.7 km</span>
+                  <span className="tr-stat-tag">8 min arrival</span>
+                </div>
+              </Link>
+
+              <Link to="/customer/provider/1" className="tr-dispatch-card">
+                <div className="tr-avatar-frame">MK</div>
+                <div className="tr-dispatch-meta">
+                  <h4>Meera Kapoor</h4>
+                  <p>Deep Turnover & Organization</p>
+                </div>
+                <div className="tr-dispatch-stats">
+                  <span className="tr-stat-dist">1.2 km</span>
+                  <span className="tr-stat-tag">11 min arrival</span>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------- 3. Categories ---------- */}
-      <section className="bw-section bw-section--alt">
-        <div className="bw-container">
-          <div className="bw-section-head">
-            <span className="bw-eyebrow">What's nearby</span>
-            <h2>Every kind of help, minutes from home.</h2>
-            <p>Average distance shown is what customers in an active area typically see.</p>
-          </div>
-          <div className="bw-categories-grid">
-            <div className="bw-category-card">
-              <div className="bw-category-icon">🔧</div>
-              <h3>Home Repair</h3>
-              <p>Leaks, wiring, locks — fixed before they become a bigger problem.</p>
-              <span className="bw-category-eta">~9 min away</span>
-            </div>
-            <div className="bw-category-card">
-              <div className="bw-category-icon">🧹</div>
-              <h3>Cleaning</h3>
-              <p>Deep cleans and regular upkeep from people who know your block.</p>
-              <span className="bw-category-eta">~7 min away</span>
-            </div>
-            <div className="bw-category-card">
-              <div className="bw-category-icon">📚</div>
-              <h3>Tutoring & Lessons</h3>
-              <p>Math, music, languages — taught by someone who can actually walk over.</p>
-              <span className="bw-category-eta">~11 min away</span>
-            </div>
-            <div className="bw-category-card">
-              <div className="bw-category-icon">🐾</div>
-              <h3>Pet Care</h3>
-              <p>Walks, sitting, and grooming from a neighbor who already knows the dog park.</p>
-              <span className="bw-category-eta">~6 min away</span>
-            </div>
-            <div className="bw-category-card">
-              <div className="bw-category-icon">💇</div>
-              <h3>Beauty & Wellness</h3>
-              <p>Haircuts, massage, skincare — no salon commute required.</p>
-              <span className="bw-category-eta">~10 min away</span>
-            </div>
-            <div className="bw-category-card">
-              <div className="bw-category-icon">📦</div>
-              <h3>Moving & Hauling</h3>
-              <p>Furniture, appliances, junk removal, handled locally.</p>
-              <span className="bw-category-eta">~14 min away</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- 4. Trust / stats ---------- */}
-      <section className="bw-section bw-section--dark">
-        <div className="bw-container">
-          <div className="bw-section-head">
-            <span className="bw-eyebrow">Why it holds up</span>
-            <h2>Proximity isn't a gimmick. It's the whole model.</h2>
-          </div>
-
-          <div className="bw-stats-grid">
+      {/* Catalog Bento Grid */}
+      <section className="tr-section-wrap">
+        <div className="tr-shell">
+          <div className="tr-section-title-wrap">
             <div>
-              <div className="bw-stat-number">94%</div>
-              <div className="bw-stat-label">of jobs matched with someone under 15 minutes away</div>
-            </div>
-            <div>
-              <div className="bw-stat-number">12,400+</div>
-              <div className="bw-stat-label">verified pros active on your block</div>
-            </div>
-            <div>
-              <div className="bw-stat-number">Zero</div>
-              <div className="bw-stat-label">travel or callout fees, ever</div>
+              <h2>Instant Categories</h2>
+              <p>Ranked strictly by current live distance to your browser coords.</p>
             </div>
           </div>
 
-          <div className="bw-testimonial-row">
-            <div className="bw-testimonial-card">
-              <p className="bw-quote">"The geyser died at 9pm. Someone was fixing it by 9:20 — four buildings down, no callout fee."</p>
-              <p className="bw-name">ANANYA R.</p>
+          <div className="tr-bento-grid">
+            {categories.map((cat, idx) => (
+              <Link to={`/customer/home?category=${encodeURIComponent(cat.title)}`} key={idx} className="tr-bento-item">
+                <div>
+                  <div className="tr-bento-top">
+                    <div className="tr-bento-icon">{cat.icon}</div>
+                    <span className="tr-tag-status">{cat.tag}</span>
+                  </div>
+                  <h3 className="tr-bento-title">{cat.title}</h3>
+                </div>
+                <div className="tr-bento-footer">
+                  <span className="tr-bento-eta">{cat.time}</span>
+                  <span>{cat.count}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Protocol Strip */}
+      <section className="tr-shell">
+        <div className="tr-steps-strip">
+          <div className="tr-steps-head">
+            <h3>Engineered for low latency fulfillment</h3>
+            <p>Every dispatch runs on edge location calculations without third-party transit markups.</p>
+          </div>
+
+          <div className="tr-steps-flow">
+            <div className="tr-step-col">
+              <div className="tr-step-col-num">01 / DISPATCH</div>
+              <h4>Direct Precision</h4>
+              <p>Native browser coordinates identify professionals already within walking radius.</p>
             </div>
-            <div className="bw-testimonial-card">
-              <p className="bw-quote">"Found a math tutor two lanes over. My daughter walks there now instead of us driving across town."</p>
-              <p className="bw-name">FARHAN S.</p>
+            <div className="tr-step-col">
+              <div className="tr-step-col-num">02 / CALCULATION</div>
+              <h4>Haversine Proximity</h4>
+              <p>Client-side spatial algorithms sort matches without reliance on external API bridges.</p>
             </div>
-            <div className="bw-testimonial-card">
-              <p className="bw-quote">"I compared three cleaners by distance before picking one nine minutes away. Took less time than ordering dinner."</p>
-              <p className="bw-name">PRIYA M.</p>
+            <div className="tr-step-col">
+              <div className="tr-step-col-num">03 / SETTLEMENT</div>
+              <h4>Direct Execution</h4>
+              <p>Finalize completion on-site with zero platform mileage surcharges.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------- 5. Final CTA ---------- */}
-      <section className="bw-section bw-final-cta">
-        <div className="bw-container">
-          <h2>Your neighborhood is already on Blockwise.</h2>
-          <p>Join as a customer looking for help, or as a pro ready for work that's minutes from home.</p>
-          <div className="bw-cta-row">
-            <Link to="/register" className="bw-cta-primary">Sign Up</Link>
-            <Link to="/login" className="bw-cta-secondary">Log In</Link>
+      {/* Minimal Footer */}
+      <footer className="tr-footer-clean">
+        <div className="tr-shell tr-footer-row">
+          <div>© LocalFix Platform. Built with React & Firebase.</div>
+          <div className="tr-footer-nav">
+            <Link to="/customer/home">Marketplace</Link>
+            <Link to="/register">Provider Enrollment</Link>
+            <Link to="/login">Account Portal</Link>
           </div>
-        </div>
-      </section>
-
-      {/* ---------- Footer ---------- */}
-      <footer className="bw-footer">
-        <div className="bw-footer-grid">
-          <div>
-            <div className="bw-logo">Block<span>wise</span></div>
-            <p className="bw-footer-tagline">The hyperlocal services marketplace. Not a single mile marked up.</p>
-          </div>
-          <div>
-            <h4>For Customers</h4>
-            <ul>
-              <li><a href="#how-it-works">How it works</a></li>
-              <li><a href="#categories">Browse categories</a></li>
-              <li><a href="#safety">Safety & vetting</a></li>
-              <li><a href="#pricing">Pricing</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4>For Pros</h4>
-            <ul>
-              <li><a href="#become-a-pro">Become a pro</a></li>
-              <li><a href="#earnings">Earnings calculator</a></li>
-              <li><a href="#pro-app">Pro app</a></li>
-              <li><a href="#community">Community</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4>Company</h4>
-            <ul>
-              <li><a href="#about">About</a></li>
-              <li><a href="#careers">Careers</a></li>
-              <li><a href="#press">Press</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="bw-footer-bottom">
-          <span>© 2026 Blockwise</span>
-          <span>Privacy · Terms</span>
         </div>
       </footer>
     </div>

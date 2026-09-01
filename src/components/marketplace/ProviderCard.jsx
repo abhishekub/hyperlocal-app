@@ -1,26 +1,23 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { RatingStars } from './RatingStars';
 
 export const ProviderCard = ({ provider }) => {
+  const initials = provider.name.split(' ').map((n) => n[0]).join('').slice(0, 2);
+
   return (
-    <div style={{ 
-      border: '1px solid #ddd', 
-      padding: '1rem', 
-      borderRadius: '8px',
-      marginBottom: '1rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      <div>
-        <h3 style={{ margin: '0 0 0.5rem 0' }}>{provider.displayName || 'Service Provider'}</h3>
-        <p style={{ margin: '0', color: '#555' }}>{provider.serviceType || 'General Services'}</p>
+    <Link to={`/customer/provider/${provider.id}`} className="bw-pcard">
+      <div className="bw-pcard-top">
+        <div className="bw-avatar">{initials}</div>
+        <span className="bw-distance-badge">{provider.distanceMinutes} min away</span>
       </div>
-      <div style={{ textAlign: 'right' }}>
-        <strong style={{ fontSize: '1.2rem', color: '#0066cc' }}>
-          {provider.distance.toFixed(1)} km
-        </strong>
-        <p style={{ margin: '0', fontSize: '0.8rem', color: '#777' }}>away</p>
+      <div className="bw-pcard-name">{provider.name}</div>
+      <div className="bw-pcard-category">{provider.category}</div>
+      <RatingStars rating={provider.rating} reviewCount={provider.reviewCount} />
+      <div className="bw-pcard-footer">
+        <span className="bw-pcard-from">From</span>
+        <span className="bw-pcard-price">&#8377;{provider.startingPrice}</span>
       </div>
-    </div>
+    </Link>
   );
 };
